@@ -1,6 +1,6 @@
 import { $, $$, trades, settings, ui, esc, money, signedMoney, price, qtyFmt, dateLabel,
          pnlRaw, pnlDisplay, rMultiple, riskAmount, resultOf, sorted, isFiltering,
-         computeStats, toneClass, MISTAKES, EMOTIONS, removeTrade } from "./store.js";
+         computeStats, toneClass, MISTAKES, EMOTIONS, removeTrade, upsertTrade } from "./store.js";
 import { openTrade, deleteTrade, askConfirm } from "./dialogs.js";
 
 function renderLedger(list, total){
@@ -231,6 +231,48 @@ function initTable(fn){
   $("#bulkClear").addEventListener("click", () => {
     ui.selected.clear();
     onChange({ animate:false });
+  });
+
+  // edit massal: ubah setup / kesalahan untuk banyak trade sekaligus
+  $("#bulkEdit").addEventListener("click", () => {
+    const n = ui.selected.size;
+    if(!n) return;
+    $("#bulkEditHint").textContent = "Berlaku untuk " + n + " trade terpilih. Bagian yang tidak diubah akan dibiarkan apa adanya.";
+    const setups = Array.from(new Set(trades.map(t => t.setup).filter(Boolean))).sort();
+    $("#beSetupList").innerHTML = setups.map(s => `<option value="${esc(s)}">`).join("");
+    $("#beSetup").value = "";
+    $("#bulkEditDialog").querySelector('input[name="beMode"][value="keep"]').checked = true;
+    $("#beMistakeFields").disabled = true;
+    $("#beMistakes").innerHTML = MISTAKES.map(m =>
+      `<label><input type="checkbox" name="beMistake" value="${esc(m)}"> ${esc(m)}</label>`).join("");
+    $("#bulkEditDialog").showModal();
+  });
+  ["#closeBulkEdit", "#cancelBulkEdit"].forEach(s =>
+    $(s).addEventListener("click", () => $("#bulkEditDialog").close()));
+  $("#bulkEditDialog").addEventListener("click", e => {
+    if(e.target === $("#bulkEditDialog")) $("#bulkEditDialog").close();
+  });
+  $("#bulkEditDialog").addEventListener("change", e => {
+    if(e.target.name === "beMode") $("#beMistakeFields").disabled = e.target.value === "keep";
+  });
+  $("#bulkEditForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const ids = Array.from(ui.selected);
+    const setup = $("#beSetup").value.trim();
+    const replace = document.querySelector('#bulkEditDialog input[name="beMode"]:checked').value === "replace";
+    $("#bulkEditDialog").close();
+    if(!ids.length || (!setup && !replace)) return;
+    const mistakes = replace
+      ? $$("#bulkEditDialog input[name=beMistake]:checked").map(i => i.value)
+      : null;
+    ids.forEach(id => {
+      const data = {};
+      if(setup) data.setup = setup;
+      if(replace) data.mistakes = mistakes;
+      if(Object.keys(data).length) upsertTrade(data, id);
+    });
+    ui.selected.clear();
+    onChange();
   });
   $("#bulkDelete").addEventListener("click", async () => {
     const ids = Array.from(ui.selected);

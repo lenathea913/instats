@@ -30,7 +30,13 @@ function load(){
     if(s && isFinite(s.usdToIdr) && s.usdToIdr > 0) settings.usdToIdr = Number(s.usdToIdr);
   }catch(e){}
 }
-function saveTrades(){ try{ localStorage.setItem(KEY_TRADES, JSON.stringify(trades)); }catch(e){ toastStorageError(); } }
+let dataHook = null;
+/** daftarkan callback yang dipanggil tiap data trade berubah (dipakai backup otomatis) */
+function onDataSave(fn){ dataHook = fn; }
+function saveTrades(){
+  try{ localStorage.setItem(KEY_TRADES, JSON.stringify(trades)); }catch(e){ toastStorageError(); }
+  if(dataHook){ try{ dataHook(); }catch(e){} }
+}
 function saveSettings(){ try{ localStorage.setItem(KEY_SETTINGS, JSON.stringify(settings)); }catch(e){ toastStorageError(); } }
 function toastStorageError(){
   const n = $("#filterNote");
@@ -43,6 +49,8 @@ const uid = () => (crypto.randomUUID ? crypto.randomUUID() : "t" + Date.now().to
 /* ---------- format ---------- */
 const fmtCache = {};
 function money(v, cur){
+  // normalisasi: trade lama / impor bisa tanpa field currency
+  if(cur !== "IDR") cur = "USD";
   const k = cur + "|" + settings.usdToIdr;
   if(!fmtCache[k]){
     fmtCache[k] = {
@@ -104,7 +112,9 @@ function riskAmount(t){
 /** nilai P&L dalam mata uang tampilan */
 function pnlDisplay(t){
   const raw = pnlRaw(t);
-  if(t.currency === settings.displayCur) return raw;
+  // trade lama / tanpa field currency dianggap USD (mata uang asli jurnal)
+  const cur = t.currency || "USD";
+  if(cur === settings.displayCur) return raw;
   return settings.displayCur === "IDR" ? raw * settings.usdToIdr : raw / settings.usdToIdr;
 }
 function resultOf(t){ const p = pnlRaw(t); return p > 0.0000001 ? "win" : p < -0.0000001 ? "loss" : "flat"; }
@@ -275,7 +285,7 @@ function restoreFromBackup(data){
 
 export {
   MISTAKES, EMOTIONS, $, $$, trades, settings, ui,
-  load, saveTrades, saveSettings, uid, fmtCache, fmtCacheClear,
+  load, saveTrades, saveSettings, onDataSave, uid, fmtCache, fmtCacheClear,
   money, signedMoney, compactMoney, price, qtyFmt, dateLabel, shortDate, esc,
   pnlRaw, rMultiple, riskAmount, pnlDisplay, resultOf,
   filtered, sorted, computeStats, toneClass, isFiltering,

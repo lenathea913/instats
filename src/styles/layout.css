@@ -98,6 +98,14 @@ section:first-child{margin-top:34px}
 .bd-table td{padding:6px;border-bottom:1px solid var(--line)}
 .bd-table tbody tr:last-child td{border-bottom:none}
 .bd-table td.sym{font-weight:600;white-space:nowrap}
+.hist{display:grid;gap:9px;align-content:start}
+.hist-row{display:grid;grid-template-columns:64px 1fr 32px;gap:8px;align-items:center}
+.hist-label{font-size:.76rem;color:var(--muted);text-align:right;white-space:nowrap}
+.hist-bar{display:flex;align-items:center;height:20px;border-radius:5px;background:var(--surface-3);overflow:hidden}
+.hist-fill{display:block;height:100%;min-width:3px;border-radius:5px;transition:width .3s ease}
+.hist-fill.neg{background:var(--loss)}
+.hist-fill.pos{background:var(--profit)}
+.hist-count{font-size:.78rem;text-align:right;color:var(--muted)}
 
 /* ---------- kalender P&L ---------- */
 .kal-nav{display:flex;align-items:center;gap:4px}
@@ -114,6 +122,13 @@ section:first-child{margin-top:34px}
 .cal-day.win .cal-v{color:var(--profit)}
 .cal-day.loss .cal-v{color:var(--loss)}
 .cal-day.flat .cal-v{color:var(--muted)}
+
+/* ---------- kalkulator position sizing ---------- */
+.calc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px;align-items:start}
+.calc-inputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.calc-out{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  border-top:1px solid var(--line);border-left:1px solid var(--line);
+  background:var(--surface);border-radius:var(--radius);overflow:hidden}
 
 footer{
   border-top:1px solid var(--line);color:var(--muted-2);font-size:.78rem;

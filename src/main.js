@@ -13,7 +13,8 @@ import { initDialogs } from "./dialogs.js";
 import { initBackup } from "./backup.js";
 import { renderBreakdown } from "./stats.js";
 import { renderCalendar, initCalendar } from "./calendar.js";
-import { exportCsv } from "./csv.js";
+import { exportCsv, initImport } from "./csv.js";
+import { initCalc } from "./calc.js";
 
 function render(opts){
   const list = filtered();
@@ -47,6 +48,8 @@ initChart();
 initBackup(render);
 initCalendar();
 $("#exportCsv").addEventListener("click", () => exportCsv(filtered()));
+initImport(render);
+initCalc();
 
 $("#curIDR").addEventListener("click", () => {
   settings.displayCur = "IDR"; saveSettings(); fmtCacheClear(); render();

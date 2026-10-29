@@ -5,7 +5,7 @@
    unduh JSON bernama rekap-backup-YYYY-MM-DD.json, atau
    pulihkan dari file cadangan dengan konfirmasi merge.
    ============================================================ */
-import { $, trades, settings, restoreFromBackup } from "./store.js";
+import { $, trades, settings, restoreFromBackup, onDataSave } from "./store.js";
 import { askConfirm } from "./dialogs.js";
 
 const pad = (n) => String(n).padStart(2, "0");
@@ -49,19 +49,23 @@ function hideMsg(){
   if(el) el.hidden = true;
 }
 
+/** isi backup & nama file harian (dipakai unduh maupun tulis ke folder) */
+function backupPayload(){
+  return { trades, settings: { displayCur: settings.displayCur, usdToIdr: settings.usdToIdr } };
+}
+function backupName(){
+  const d = new Date();
+  return "rekap-backup-" + d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + ".json";
+}
+
 /** unduh seluruh jurnal (+ pengaturan) sebagai file JSON */
 function download(){
   try{
-    const data = {
-      trades,
-      settings: { displayCur: settings.displayCur, usdToIdr: settings.usdToIdr }
-    };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify(backupPayload(), null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    const d = new Date();
     a.href = url;
-    a.download = "rekap-backup-" + d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + ".json";
+    a.download = backupName();
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -116,10 +120,107 @@ async function onFile(ev, render){
     : "Progres berhasil dipulihkan — tidak ada trade baru, semua sudah ada di jurnal.");
 }
 
+/* ---------- backup otomatis ke folder (File System Access API) ---------- */
+const supportsDir = typeof window !== "undefined" && "showDirectoryPicker" in window;
+let dirHandle = null;
+let writeTimer = 0;
+
+async function idbGet(key){
+  try{
+    const db = await new Promise((res, rej) => {
+      const req = indexedDB.open("rekap", 1);
+      req.onupgradeneeded = () => { req.result.createObjectStore("fs"); };
+      req.onsuccess = () => res(req.result);
+      req.onerror = () => rej(req.error);
+    });
+    return await new Promise((res, rej) => {
+      const r = db.transaction("fs", "readonly").objectStore("fs").get(key);
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    });
+  }catch(e){ return null; }
+}
+async function idbSet(key, val){
+  try{
+    const db = await new Promise((res, rej) => {
+      const req = indexedDB.open("rekap", 1);
+      req.onupgradeneeded = () => { req.result.createObjectStore("fs"); };
+      req.onsuccess = () => res(req.result);
+      req.onerror = () => rej(req.error);
+    });
+    await new Promise((res, rej) => {
+      const tx = db.transaction("fs", "readwrite");
+      const r = tx.objectStore("fs").put(val, key);
+      r.onsuccess = () => res();
+      r.onerror = () => rej(r.error);
+    });
+  }catch(e){}
+}
+
+async function hasPermission(handle, request){
+  if(!handle) return false;
+  const opts = { mode: "readwrite" };
+  try{
+    if((await handle.queryPermission(opts)) === "granted") return true;
+    if(request && (await handle.requestPermission(opts)) === "granted") return true;
+  }catch(e){}
+  return false;
+}
+
+/** tulis backup ke folder pilihan (file harian ditimpa) */
+async function writeBackupToDir(silent){
+  if(!dirHandle || !(await hasPermission(dirHandle, false))) return false;
+  try{
+    const fh = await dirHandle.getFileHandle(backupName(), { create: true });
+    const w = await fh.createWritable();
+    await w.write(JSON.stringify(backupPayload(), null, 2));
+    await w.close();
+    try{ localStorage.setItem(KEY_LAST_BACKUP, String(Date.now())); }catch(e){}
+    updateBackupAge();
+    if(!silent) showMsg("ok", "Backup ditulis ke folder pilihan (" + backupName() + ").");
+    return true;
+  }catch(e){
+    if(!silent) showMsg("err", "Gagal menulis ke folder: " + e.message);
+    return false;
+  }
+}
+
+/** debounce: tiap perubahan data menulis backup (folder yang sudah dipilih) */
+function scheduleDirWrite(){
+  clearTimeout(writeTimer);
+  writeTimer = setTimeout(() => { writeBackupToDir(true); }, 1500);
+}
+
+async function pickBackupDir(){
+  try{
+    const handle = await window.showDirectoryPicker({ mode: "readwrite" });
+    dirHandle = handle;
+    await idbSet("dir", handle);
+    await writeBackupToDir(true);
+    showMsg("ok", "Folder dipilih — backup otomatis aktif (" + backupName() + " diperbarui tiap data berubah).");
+  }catch(e){
+    if(e && e.name === "AbortError") return; // pengguna membatalkan pemilihan
+    showMsg("err", "Gagal memilih folder: " + e.message);
+  }
+}
+
 /** pasang handler kartu Backup & Pulihkan (panggil dari main.js dengan render) */
 export function initBackup(render){
   $("#backupBtn").addEventListener("click", download);
   $("#restoreBtn").addEventListener("click", () => $("#restoreFile").click());
   $("#restoreFile").addEventListener("change", (ev) => onFile(ev, render));
   updateBackupAge();
+
+  if(supportsDir){
+    $("#folderBtn").hidden = false;
+    $("#folderBtn").addEventListener("click", async () => {
+      if(dirHandle && await hasPermission(dirHandle, true)){
+        await writeBackupToDir(false);
+        return;
+      }
+      await pickBackupDir();
+    });
+    idbGet("dir").then(h => { if(h) dirHandle = h; });
+    onDataSave(scheduleDirWrite);
+  }
 }

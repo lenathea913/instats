@@ -1,0 +1,17 @@
+# dependensi & build
+node_modules
+dist
+
+# environment / rahasia
+.env
+.env.local
+.dev.vars
+
+# data pribadi pengguna (jangan pernah dipublikasikan)
+backup-log/*.json
+.chrome-tmp/
+
+# sampah OS / log
+*.log
+.DS_Store
+Thumbs.db

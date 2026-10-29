@@ -1,0 +1,121 @@
+/* ---------- top bar ---------- */
+.topbar{
+  position:sticky;top:0;z-index:30;background:rgba(12,15,19,.94);
+  border-bottom:1px solid var(--line);
+  backdrop-filter:saturate(140%) blur(6px);
+}
+.topbar-inner{
+  max-width:1320px;margin:0 auto;padding:12px var(--pad);
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+}
+.brand{display:flex;align-items:baseline;gap:9px;margin-right:auto}
+.brand-mark{
+  display:grid;place-items:center;width:26px;height:26px;border-radius:7px;
+  background:var(--accent);color:var(--accent-ink);font-weight:750;font-size:.86rem;
+  transform:translateY(3px);
+}
+.brand-sub{color:var(--muted);font-size:.82rem}
+.topbar-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+
+.segmented{display:flex;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:3px;gap:2px}
+.segmented button{
+  padding:5px 11px;border-radius:6px;font-size:.8rem;font-weight:600;color:var(--muted);
+  transition:background .16s ease,color .16s ease;
+}
+.segmented button:hover{color:var(--text)}
+.segmented button[aria-pressed="true"]{background:var(--surface-3);color:var(--text);box-shadow:0 1px 2px #0007}
+
+.btn{
+  display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 13px;
+  border:1px solid var(--line-strong);background:var(--surface-2);border-radius:8px;
+  font-size:.87rem;font-weight:560;transition:background .16s ease,border-color .16s ease,transform .1s ease;
+}
+.btn:hover{background:var(--surface-3);border-color:#414c5a}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:650}
+.btn-primary:hover{background:var(--accent-strong);border-color:var(--accent-strong)}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--muted)}
+.btn-ghost:hover{background:var(--surface-2);border-color:var(--line);color:var(--text)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.rate-chip{
+  display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 11px;border-radius:8px;
+  border:1px dashed var(--line-strong);color:var(--muted);font-size:.8rem;
+  transition:color .16s ease,border-color .16s ease;
+}
+.rate-chip:hover{color:var(--text);border-color:var(--accent)}
+
+/* ---------- layout ---------- */
+main{max-width:1320px;margin:0 auto;padding:0 var(--pad) 72px}
+section{margin-top:52px}
+section:first-child{margin-top:34px}
+.section-head{
+  display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:16px;
+}
+.section-head .hint{color:var(--muted);font-size:.84rem}
+.section-head .spacer{margin-left:auto}
+
+/* ---------- summary ledger ---------- */
+.ledger{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  border-top:1px solid var(--line);border-left:1px solid var(--line);
+  background:var(--surface);border-radius:var(--radius);overflow:hidden;
+}
+.stat{
+  padding:16px 18px 15px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+  min-width:0;
+}
+.stat-label{display:block;color:var(--muted);font-size:.76rem;letter-spacing:.02em}
+.stat-value{
+  display:block;margin-top:7px;font-size:1.42rem;font-weight:640;letter-spacing:-0.028em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.stat-note{display:block;margin-top:3px;color:var(--muted-2);font-size:.76rem}
+.filter-note{margin-top:12px;color:var(--muted);font-size:.83rem}
+
+/* ---------- backup & pulihkan ---------- */
+.backup-actions{display:flex;gap:8px;flex-wrap:wrap}
+.backup-msg{margin-top:2px;font-size:.85rem}
+.backup-msg.ok{color:var(--profit)}
+.backup-msg.err{color:var(--loss)}
+.backup-age{margin-top:2px;font-size:.8rem}
+.backup-age.ok{color:var(--muted)}
+.backup-age.err{color:var(--loss)}
+
+/* ---------- statistik per setup & simbol ---------- */
+.breakdown{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.bd-card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 16px;min-width:0;
+}
+.bd-title{font-size:.8rem;font-weight:650;color:var(--muted);letter-spacing:.03em;margin-bottom:8px}
+.bd-scroll{overflow-x:auto}
+.bd-table{width:100%;border-collapse:collapse;font-size:.86rem}
+.bd-table th{
+  text-align:left;color:var(--muted-2);font-weight:600;font-size:.72rem;
+  letter-spacing:.03em;padding:4px 6px;border-bottom:1px solid var(--line);
+}
+.bd-table th.r,.bd-table td.r{text-align:right}
+.bd-table td{padding:6px;border-bottom:1px solid var(--line)}
+.bd-table tbody tr:last-child td{border-bottom:none}
+.bd-table td.sym{font-weight:600;white-space:nowrap}
+
+/* ---------- kalender P&L ---------- */
+.kal-nav{display:flex;align-items:center;gap:4px}
+.kal-month{font-weight:650;font-size:.9rem;min-width:132px;text-align:center}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.cal-wd{font-size:.72rem;color:var(--muted-2);text-align:center;font-weight:650;letter-spacing:.05em;padding-bottom:2px}
+.cal-cell{
+  min-height:62px;border:1px solid var(--line);border-radius:8px;background:var(--surface);
+  padding:6px 8px;display:flex;flex-direction:column;gap:2px;min-width:0;
+}
+.cal-blank{background:transparent;border-color:transparent}
+.cal-d{font-size:.74rem;color:var(--muted)}
+.cal-v{font-size:.78rem;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal-day.win .cal-v{color:var(--profit)}
+.cal-day.loss .cal-v{color:var(--loss)}
+.cal-day.flat .cal-v{color:var(--muted)}
+
+footer{
+  border-top:1px solid var(--line);color:var(--muted-2);font-size:.78rem;
+  max-width:1320px;margin:0 auto;padding:18px var(--pad) 34px;
+}

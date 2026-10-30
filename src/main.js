@@ -1,5 +1,5 @@
 /* ============================================================
-   Rekap — jurnal trading crypto (lokal, tanpa server)
+   InStats — jurnal trading crypto (lokal, tanpa server)
    main.js : render halaman, switch mata uang, init.
    ============================================================ */
 import {

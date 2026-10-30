@@ -1,5 +1,5 @@
 /* ============================================================
-   Rekap — calc.js : kalkulator position sizing.
+   InStats — calc.js : kalkulator position sizing.
    Saldo + risiko% + entry + stop → nominal risiko, qty ideal,
    nilai posisi, dan leverage terhadap saldo.
    ============================================================ */

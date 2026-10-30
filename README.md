@@ -1,10 +1,10 @@
-# 📊 Rekap Jurnal Trading Crypto
+# 📊 InStats Jurnal Trading Crypto
 
 > **English:** A free, open-source crypto trading journal that runs fully local in your browser  no server, no account, no data leaves your machine. Track entries, exits, stop losses, setups, mistakes and emotions; get P&L, R-multiple, win rate, profit factor, expectancy, an equity curve, a loss-factor pie chart, a P&L calendar, and CSV import/export. Built with vanilla JS + Vite, MIT licensed.
 
 Aplikasi jurnal trading crypto lokal (Vite, data tersimpan di **localStorage**). Semua proses berjalan di **localhost** komputermu sendiri — tidak ada data yang dikirim ke mana pun.
 
-![Dashboard Rekap](screenshots/dashboard.png)
+![Dashboard InStats](screenshots/dashboard.png)
 
 ## ✅ Syarat
 
@@ -50,7 +50,7 @@ npm run dev
 
 - Filter trade (pencarian, arah, hasil, setup, **kesalahan**, **emosi**, rentang tanggal)
 - **Ekspor CSV** sesuai filter aktif untuk Excel / Google Sheets
-- **Impor CSV**  dukung format ekspor Rekap sendiri plus alias kolom umum (date/symbol/side/entry/exit/…), dengan deteksi duplikat
+- **Impor CSV**  dukung format ekspor InStats sendiri plus alias kolom umum (date/symbol/side/entry/exit/…), dengan deteksi duplikat
 - **Edit massal**  centang banyak baris lalu ubah setup / kesalahan sekaligus
 - **Hapus massal**  centang banyak baris (checkbox) lalu hapus sekaligus dengan satu konfirmasi
 - **Kalkulator position sizing**  saldo, risiko %, entry & stop → qty ideal sebelum entry

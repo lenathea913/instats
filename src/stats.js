@@ -1,5 +1,5 @@
 /* ============================================================
-   Rekap — stats.js : statistik per setup & per simbol.
+   InStats — stats.js : statistik per setup & per simbol.
    Mengelompokkan trade yang sedang ditampilkan lalu menghitung
    jumlah trade, win rate, total P&L, dan R-rata-rata tiap kelompok.
    ============================================================ */

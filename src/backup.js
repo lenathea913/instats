@@ -1,5 +1,5 @@
 /* ============================================================
-   Rekap — jurnal trading lokal (localStorage, tanpa server)
+   InStats — jurnal trading lokal (localStorage, tanpa server)
    backup.js : Backup & Pulihkan file JSON.
    Alur sama dengan proyek App (ML/AI Academy):
    unduh JSON bernama rekap-backup-YYYY-MM-DD.json, atau
@@ -95,11 +95,11 @@ async function onFile(ev, render){
   try{
     data = JSON.parse(await file.text());
   }catch(e){
-    showMsg("err", "File tidak dikenali sebagai backup Rekap.");
+    showMsg("err", "File tidak dikenali sebagai backup InStats.");
     return;
   }
   if(!looksLikeBackup(data)){
-    showMsg("err", "File tidak dikenali sebagai backup Rekap.");
+    showMsg("err", "File tidak dikenali sebagai backup InStats.");
     return;
   }
 
@@ -111,7 +111,7 @@ async function onFile(ev, render){
 
   const res = restoreFromBackup(data);
   if(!res.ok){
-    showMsg("err", "File tidak dikenali sebagai backup Rekap.");
+    showMsg("err", "File tidak dikenali sebagai backup InStats.");
     return;
   }
   if(typeof render === "function") render();

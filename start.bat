@@ -1,9 +1,9 @@
 @echo off
-title Rekap — Jurnal Trading
+title InStats — Jurnal Trading
 cd /d "%~dp0"
 
 echo ============================================
-echo    Rekap - Jurnal Trading - Launcher
+echo    InStats - Jurnal Trading - Launcher
 echo ============================================
 echo.
 echo Menjalankan server, mohon tunggu...

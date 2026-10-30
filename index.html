@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
-<title>Rekap — Jurnal Trading</title>
+<title>InStats — Jurnal Trading</title>
 <link rel="stylesheet" href="/src/style.css">
 </head>
 <body>
@@ -12,9 +12,10 @@
 <header class="topbar">
   <div class="topbar-inner">
     <div class="brand">
-      <span class="brand-mark">R</span>
-      <h1>Rekap</h1>
-      <span class="brand-sub">jurnal trading crypto</span>
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5.5-5.5 3.5 3L18 8"/><path d="M14 8h4v4"/></svg>
+      </span>
+      <h1>InStats</h1>
     </div>
     <div class="topbar-actions">
       <div class="segmented" role="group" aria-label="Mata uang tampilan">
@@ -138,7 +139,7 @@
       </div>
       <div class="bd-card">
         <h3 class="bd-title">Per simbol</h3>
-        <div class="bd-scroll">
+        <div class="bd-scroll bd-scroll-limit">
           <table class="bd-table" id="bdSymbol">
             <thead><tr><th scope="col">Simbol</th><th scope="col" class="r">Trade</th><th scope="col" class="r">Win rate</th><th scope="col" class="r">P&amp;L</th><th scope="col" class="r">R rata</th></tr></thead>
             <tbody></tbody>

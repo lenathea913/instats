@@ -1,5 +1,5 @@
 /* ============================================================
-   Rekap — csv.js : ekspor trade yang sedang ditampilkan
+   InStats — csv.js : ekspor trade yang sedang ditampilkan
    (sesuai filter aktif) ke file CSV untuk Excel / Google Sheets.
    ============================================================ */
 import { $, settings, sorted, rMultiple, pnlRaw, EMOTIONS, trades, upsertTrade } from "./store.js";

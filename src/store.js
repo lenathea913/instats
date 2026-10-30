@@ -1,6 +1,6 @@
 
 /* ============================================================
-   Rekap — jurnal trading lokal (localStorage, tanpa server)
+   InStats — jurnal trading lokal (localStorage, tanpa server)
    store.js : state aplikasi, penyimpanan, format angka,
               kalkulasi P&L/R, filtering, sorting, statistik.
    Modul ini bebas DOM (kecuali toast error penyimpanan).

@@ -165,7 +165,15 @@ section:first-child{margin-top:34px}
 .bd-card:hover{border-color:#39424f;transform:translateY(-2px);box-shadow:0 18px 36px -26px rgba(0,0,0,.95)}
 .bd-title{font-size:.8rem;font-weight:650;color:var(--muted);letter-spacing:.03em;margin-bottom:8px}
 .bd-scroll{overflow-x:auto}
-.bd-table{width:100%;border-collapse:collapse;font-size:.86rem}
+/* Per simbol: cukup 5 baris, sisanya lewat scroll */
+.bd-scroll-limit{
+  max-height:197px;
+  padding-bottom:2px;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+}
+.bd-scroll-limit thead th{background:var(--surface-2)}
+.bd-table{width:100%;min-width:0;border-collapse:collapse;font-size:.86rem}
 .bd-table th{
   text-align:left;color:var(--muted-2);font-weight:600;font-size:.72rem;
   letter-spacing:.03em;padding:4px 6px;border-bottom:1px solid var(--line);

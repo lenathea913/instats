@@ -1,11 +1,11 @@
 /* ============================================================
-   Rekap — score.js : skor kinerja komposit 0–100 + radar.
+   InStats — score.js : skor kinerja komposit 0–100 + radar.
    Prinsip yang ditiru (ATM — Amati): rumus terbuka, diberi
    nomor versi, komponen dinormalkan ke ambang "full marks"
    yang eksplisit, lalu digabung dengan bobot tetap; skor
    ditahan bila sampelnya terlalu kecil.
    Modifikasi: bobot, ambang, nama, dan label semuanya milik
-   Rekap — bukan salinan formula Edge Score milik LuxAlgo.
+   InStats — bukan salinan formula Edge Score milik LuxAlgo.
    ============================================================ */
 import { $, computeStats } from "./store.js";
 

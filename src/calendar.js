@@ -1,5 +1,5 @@
 /* ============================================================
-   Rekap — calendar.js : kalender P&L harian (heatmap bulanan).
+   InStats — calendar.js : kalender P&L harian (heatmap bulanan).
    Mengelompokkan P&L per hari dari trade yang sedang ditampilkan,
    dengan navigasi bulan ‹ ›.
    ============================================================ */

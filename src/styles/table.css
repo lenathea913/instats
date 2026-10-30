@@ -24,6 +24,9 @@
   overflow-x:auto;overflow-y:visible;
   box-shadow:0 20px 44px -34px rgba(0,0,0,.95);
 }
+/* tombol lewati batas 15 baris */
+.table-more{display:flex;justify-content:center;margin-top:12px}
+.table-more .btn{font-size:.84rem}
 table{width:100%;border-collapse:collapse;min-width:1150px}
 thead th{
   position:sticky;top:0;z-index:2;background:transparent;

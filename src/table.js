@@ -166,15 +166,16 @@ function pnlCell(t){
   return `<span class="${toneClass(v)} num">${conv}${signedMoney(v, settings.displayCur)}</span>`;
 }
 
-/* batas baris tabel: cukup 15 trade terbaru, selebihnya lewat filter/pencarian */
+/* batas baris tabel: cukup 15 trade terbaru, kecuali pengguna minta semua */
 const TABLE_LIMIT = 15;
+let showAll = false;
 
 function renderTable(list){
   const tbody = $("#tbody");
-  // pilih 15 trade terbaru berdasarkan tanggal, baru terapkan urutan kolom aktif
+  // pilih trade terbaru berdasarkan tanggal, baru terapkan urutan kolom aktif
   const newest = list.slice()
     .sort((a, b) => a.date < b.date ? 1 : a.date > b.date ? -1 : (b.createdAt || 0) - (a.createdAt || 0))
-    .slice(0, TABLE_LIMIT);
+    .slice(0, showAll ? list.length : TABLE_LIMIT);
   const rows = sorted(newest);
 
   // buang pilihan yang sudah tidak ada di jurnal
@@ -260,8 +261,18 @@ function renderTable(list){
   }
   $("#rowCount").textContent = !rows.length ? ""
     : list.length > rows.length
-      ? "menampilkan " + rows.length + " trade terbaru dari " + list.length
+      ? (showAll
+          ? "menampilkan semua " + rows.length + " baris"
+          : "menampilkan " + rows.length + " trade terbaru dari " + list.length)
       : rows.length + " baris";
+  const more = $("#tableMore"), moreBtn = $("#showAllBtn");
+  if(more && moreBtn){
+    const perlu = list.length > TABLE_LIMIT;
+    more.hidden = !perlu;
+    if(perlu) moreBtn.textContent = showAll
+      ? "Tampilkan 15 trade terbaru saja"
+      : "Tampilkan semua (" + list.length + " trade)";
+  }
   $("#resetFilters").hidden = !isFiltering();
   syncBulkBar();
 
@@ -296,6 +307,7 @@ function syncBulkBar(){
 function bindFilter(sel, key, evt){
   $(sel).addEventListener(evt || "input", e => {
     ui.filters[key] = e.target.value;
+    showAll = false; // filter baru → kembali ke tampilan 15 terbaru
     onChange({ animate:false });
   });
 }
@@ -412,7 +424,14 @@ function initTable(fn){
     $("#fSearch").value = ""; $("#fSide").value = ""; $("#fResult").value = "";
     $("#fSetup").value = ""; $("#fMistake").value = ""; $("#fEmotion").value = "";
     $("#fFrom").value = ""; $("#fTo").value = "";
+    showAll = false;
     onChange();
+  });
+
+  // lewati batas 15 baris
+  $("#showAllBtn").addEventListener("click", () => {
+    showAll = !showAll;
+    onChange({ animate:false });
   });
 }
 

@@ -2,7 +2,7 @@
 
 > **English:** A free, open-source crypto trading journal that runs fully local in your browser  no server, no account, no data leaves your machine. Track entries, exits, stop losses, setups, mistakes and emotions; get P&L, R-multiple, win rate, profit factor, expectancy, an equity curve, a loss-factor pie chart, a P&L calendar, and CSV import/export. Built with vanilla JS + Vite, MIT licensed.
 
-Aplikasi jurnal trading crypto lokal (Vite, data tersimpan di **localStorage**). Semua proses berjalan di **localhost** komputermu sendiri — tidak ada data yang dikirim ke mana pun.
+Aplikasi jurnal trading crypto lokal (Vite, data tersimpan di **localStorage**). Semua proses berjalan di **localhost** komputermu sendiri  tidak ada data yang dikirim ke mana pun.
 
 ![Dashboard InStats](screenshots/dashboard.png)
 
@@ -39,7 +39,7 @@ npm run dev
 - Catat trade (long/short) dengan harga entry, exit, quantity, stop loss
 - Hitung P&L, R-multiple, risk otomatis
 - Dashboard ringkasan (total P&L, win rate, profit factor, expectancy)
-- **Statistik per setup & per simbol** — jumlah trade, win rate, P&L, R-rata tiap kelompok
+- **Statistik per setup & per simbol**  jumlah trade, win rate, P&L, R-rata tiap kelompok
 - **Statistik lanjutan**  performa per bulan (tabel tahunan), distribusi R-multiple (histogram), win rate 30 hari
 - **Kalender P&L harian**  heatmap bulanan dengan navigasi ‹ ›
 - Grafik equity curve kumulatif + diagram pie **faktor penyebab loss** (beranimasi)
@@ -67,10 +67,10 @@ npm run dev
 
 | Masalah | Solusi |
 | --- | --- |
-| `npm` tidak dikenali | Node.js belum terinstall — install dulu dari [nodejs.org](https://nodejs.org) |
+| `npm` tidak dikenali | Node.js belum terinstall, install dulu dari [nodejs.org](https://nodejs.org) |
 | Port 5173 sudah dipakai | Jalankan `npm run dev -- --port 3000`, lalu buka `http://localhost:3000` |
 | Muncul error saat `npm install` | Hapus folder `node_modules` (jika ada) lalu jalankan `npm install` lagi |
-| Data terlihat “hilang” | Data menempel ke URL persis `localhost:5173` — pastikan port tidak berubah (port dikunci di `vite.config.js`) |
+| Data terlihat “hilang” | Data menempel ke URL persis `localhost:5173`  pastikan port tidak berubah (port dikunci di `vite.config.js`) |
 
 ## 📌 Catatan
 

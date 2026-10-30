@@ -12,6 +12,8 @@ function initDialogs(fn){
   $("#tradeForm").addEventListener("submit", submitTrade);
   $("#tradeForm").addEventListener("input", updatePreview);
   $("#tradeForm").addEventListener("change", updatePreview);
+  // Simbol: huruf besar otomatis + suffix /USDT otomatis saat mengetik
+  $("#fSymbol").addEventListener("input", (e) => normalizeSymbol(e.target));
   dlg.addEventListener("close", () => { editingId = null; });
   dlg.addEventListener("click", e => { if(e.target === dlg) dlg.close(); });
   document.addEventListener("keydown", e => {
@@ -27,10 +29,39 @@ function initDialogs(fn){
 const dlg = $("#tradeDialog");
 let editingId = null;
 
+/**
+ * Normalisasi input simbol:
+ * - huruf selalu KAPITAL
+ * - suffix /USDT ditulis otomatis (ketik "btc" → "BTC/USDT")
+ * - tempel "ethusdt" juga jadi "ETH/USDT"
+ * - pair eksplisit (berisi "/") dibiarkan apa adanya
+ * - menghapus "/" secara manual dihormati (suffix tak dipaksa balik)
+ */
+function normalizeSymbol(el){
+  const prev = el.dataset.prev || "";
+  const caret = el.selectionStart ?? el.value.length;
+  let v = el.value.toUpperCase().replace(/[^A-Z0-9._/-]/g, "");
+  const hasSlash = v.includes("/");
+  // "slashDeleted" hanya bila isi persis base pair sebelumnya (ETH/ → ETH),
+  // bukan sekadar lebih pendek — tempel/overwrite pun tetap kena auto-suffix
+  const prevBase = prev.includes("/") ? prev.slice(0, prev.indexOf("/")) : null;
+  const slashDeleted = prevBase !== null && !hasSlash && v === prevBase;
+  if(!hasSlash && !slashDeleted){
+    if(v.length > 4 && v.endsWith("USDT")) v = v.slice(0, -4);
+    if(v) v += "/USDT";
+  }
+  el.value = v;
+  el.dataset.prev = v;
+  // pertahankan kursor tepat setelah base (sebelum suffix) saat mengetik
+  const c = Math.min(caret, v.length);
+  try{ el.setSelectionRange(c, c); }catch(e){}
+}
+
 function openTrade(id){
   editingId = id || null;
   const form = $("#tradeForm");
   form.reset();
+  form.symbol.dataset.prev = "";
   $$(".err", form).forEach(e => e.textContent = "");
   $$("[aria-invalid]", form).forEach(e => e.removeAttribute("aria-invalid"));
 

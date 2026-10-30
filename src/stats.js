@@ -69,10 +69,17 @@ function renderHist(list){
   const max = Math.max(...counts, 1);
   el.innerHTML = R_BUCKETS.map((b, i) => {
     const pct = counts[i] / max * 100;
-    const tone = i < 3 ? "neg" : i >= 3 ? "pos" : "flat";
+    const neg = i < 3;
+    const fill = counts[i]
+      ? `<span class="hist-fill ${neg ? "neg" : "pos"}" style="width:${pct.toFixed(1)}%"></span>`
+      : "";
+    // batang tumbuh dari garis nol di tengah: arah = geometri, bukan cuma warna
     return `<div class="hist-row">
       <span class="hist-label">${b.label}</span>
-      <span class="hist-bar"><span class="hist-fill ${tone}" style="width:${pct.toFixed(1)}%"></span></span>
+      <span class="hist-bar">
+        <span class="hist-half l">${neg ? fill : ""}</span>
+        <span class="hist-half r">${neg ? "" : fill}</span>
+      </span>
       <span class="hist-count num">${counts[i]}</span>
     </div>`;
   }).join("");

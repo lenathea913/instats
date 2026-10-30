@@ -20,9 +20,15 @@
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{
-  margin:0;background:var(--bg);color:var(--text);font-family:var(--font);
+  margin:0;color:var(--text);font-family:var(--font);
   font-size:15px;line-height:1.5;letter-spacing:-0.006em;
   -webkit-font-smoothing:antialiased;
+  /* latar berlapis: glow amber kiri-atas, kilau hijau kanan-atas, dasar gelap */
+  background:
+    radial-gradient(900px 460px at 88% -6%, rgba(63,195,122,.055), transparent 62%),
+    radial-gradient(1100px 560px at 4% -14%, rgba(227,168,60,.07), transparent 60%),
+    var(--bg);
+  background-attachment:fixed;
 }
 ::selection{background:#e3a83c33;color:#fff}
 input,select,textarea,button{font:inherit;color:inherit;caret-color:var(--accent)}

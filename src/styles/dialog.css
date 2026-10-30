@@ -4,7 +4,7 @@ dialog{
   border-radius:14px;padding:0;width:min(700px,94vw);max-height:92vh;
   box-shadow:0 30px 80px rgba(0,0,0,.75), 0 0 0 1px rgba(255,255,255,.06);
 }
-dialog::backdrop{background:#04060acc;backdrop-filter:blur(2px)}
+dialog::backdrop{background:#04060ad9;backdrop-filter:blur(6px) saturate(120%)}
 dialog[open]{animation:pop .22s cubic-bezier(.16,.9,.3,1)}
 @keyframes pop{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
 .dlg-head{
@@ -78,3 +78,23 @@ legend{
 .preview .p-item span{display:block;font-size:.74rem;color:var(--muted)}
 .preview .p-item strong{display:block;margin-top:2px;font-size:1.12rem;font-weight:650;letter-spacing:-.02em}
 .preview .p-hint{margin-left:auto;color:var(--muted-2);font-size:.76rem;max-width:26ch;text-align:right}
+
+/* ---------- dialog: sesuaikan layout ---------- */
+.lay-list{display:grid;gap:7px}
+.lay-row{
+  display:flex;align-items:center;gap:11px;padding:9px 12px;
+  border:1px solid var(--line);border-radius:9px;background:var(--surface-2);
+  transition:border-color .14s ease,background .14s ease;
+}
+.lay-row:hover{border-color:var(--line-strong);background:var(--surface-3)}
+.lay-chk{accent-color:var(--accent);width:16px;height:16px;cursor:pointer;flex-shrink:0}
+.lay-name{font-size:.88rem;flex:1;min-width:0}
+.lay-row .icon-btn[disabled]{opacity:.3;cursor:not-allowed}
+.lay-row .icon-btn[disabled]:hover{background:none;border-color:transparent;color:var(--muted)}
+.lay-count{font-variant-numeric:tabular-nums;color:var(--muted-2);font-size:.78rem}
+/* pegangan seret-lepas */
+.lay-row[draggable="true"]{cursor:grab}
+.lay-row[draggable="true"]:active{cursor:grabbing}
+.lay-grip{display:grid;place-items:center;color:var(--muted-2);flex-shrink:0;transition:color .14s ease}
+.lay-row:hover .lay-grip{color:var(--muted)}
+.lay-row.dragging{opacity:.45;border-color:var(--accent);background:var(--surface-3)}

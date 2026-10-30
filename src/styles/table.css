@@ -22,11 +22,12 @@
 .table-wrap{
   border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);
   overflow-x:auto;overflow-y:visible;
+  box-shadow:0 20px 44px -34px rgba(0,0,0,.95);
 }
-table{width:100%;border-collapse:collapse;min-width:1060px}
+table{width:100%;border-collapse:collapse;min-width:1150px}
 thead th{
   position:sticky;top:0;z-index:2;background:transparent;
-  text-align:left;font-size:.74rem;font-weight:600;color:var(--muted);letter-spacing:.03em;
+  text-align:left;font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;
   padding:11px 12px;border-bottom:1px solid var(--line-strong);white-space:nowrap;
 }
 thead th.r{text-align:right}
@@ -43,8 +44,8 @@ tbody td{
   white-space:nowrap;
 }
 tbody tr:last-child td{border-bottom:none}
-tbody tr.main-row{transition:background .13s ease}
-tbody tr.main-row:hover{background:var(--surface-2)}
+tbody tr.main-row{transition:background .13s ease,box-shadow .13s ease}
+tbody tr.main-row:hover{background:var(--surface-2);box-shadow:inset 3px 0 0 var(--accent)}
 td.r{text-align:right}
 td.sym{font-weight:640}
 td.notes-cell{white-space:normal}
@@ -53,6 +54,16 @@ td.notes-cell{white-space:normal}
   font-size:.74rem;font-weight:600;border:1px solid var(--line-strong);color:var(--muted);
   background:var(--surface-3);
 }
+.badge.long{background:rgba(63,195,122,.1);border-color:#1f4a35;color:#7fd8a8}
+.badge.short{background:rgba(239,95,86,.1);border-color:#552724;color:#ff9b94}
+/* hasil trade sebagai chip teks — warna hanya penguat, teksnya yang membawa arti */
+.res-chip{
+  display:inline-block;padding:2px 8px;border-radius:5px;font-size:.7rem;font-weight:700;
+  letter-spacing:.06em;border:1px solid var(--line-strong);background:var(--surface-3);color:var(--muted);
+}
+.res-chip.win{background:rgba(63,195,122,.1);border-color:#1f4a35;color:#7fd8a8}
+.res-chip.loss{background:rgba(239,95,86,.1);border-color:#552724;color:#ff9b94}
+.res-chip.flat{background:var(--surface-3);border-color:var(--line-strong);color:var(--muted)}
 .detail-row td{
   background:#0f1319;padding:0;border-bottom:1px solid var(--line);white-space:normal;
 }
@@ -71,7 +82,8 @@ th.chk,td.chk{width:36px;padding-right:0}
 .kv .v{display:block;margin-top:3px;font-size:.88rem}
 .tags{display:flex;flex-wrap:wrap;gap:6px}
 .tag{
-  font-size:.74rem;padding:2px 8px;border-radius:999px;background:#2a2113;
+  font-size:.74rem;padding:2px 8px;border-radius:999px;
+  background:linear-gradient(180deg,#31270f,#2a2113);
   border:1px solid #4a3a17;color:#f0c877;
 }
 .tag.calm{background:#12251b;border-color:#1e4432;color:#7fd8a8}

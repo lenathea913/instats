@@ -16,7 +16,7 @@ const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
 
 let trades = [];
 let settings = { displayCur:"USD", usdToIdr:16250 };
-let ui = { sortKey:"date", sortDir:"desc", expanded:new Set(), selected:new Set(), filters:{ q:"", side:"", result:"", setup:"", mistake:"", emotion:"", from:"", to:"" } };
+let ui = { sortKey:"date", sortDir:"desc", expanded:new Set(), selected:new Set(), filters:{ q:"", side:"", result:"", setup:"", mistake:"", emotion:"", from:"", to:"" }, period:{ preset:"all", from:"", to:"" } };
 
 /* ---------- storage ---------- */
 function load(){
@@ -28,6 +28,9 @@ function load(){
     const s = JSON.parse(localStorage.getItem(KEY_SETTINGS) || "null");
     if(s && (s.displayCur === "IDR" || s.displayCur === "USD")) settings.displayCur = s.displayCur;
     if(s && isFinite(s.usdToIdr) && s.usdToIdr > 0) settings.usdToIdr = Number(s.usdToIdr);
+    if(s && s.kartu && Array.isArray(s.kartu.order) && s.kartu.order.length){
+      settings.kartu = { order: s.kartu.order, off: Array.isArray(s.kartu.off) ? s.kartu.off : [] };
+    }
   }catch(e){}
 }
 let dataHook = null;
@@ -119,6 +122,58 @@ function pnlDisplay(t){
 }
 function resultOf(t){ const p = pnlRaw(t); return p > 0.0000001 ? "win" : p < -0.0000001 ? "loss" : "flat"; }
 
+/* ---------- periode ringkasan (7d/30d/…/custom) ---------- */
+const isoLocal = (d) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+/** apakah trade ikut dihitung pada periode Ringkasan yang aktif */
+function inPeriod(t){
+  const p = ui.period;
+  if(!p || p.preset === "all") return true;
+  if(p.preset === "custom"){
+    if(p.from && t.date < p.from) return false;
+    if(p.to && t.date > p.to) return false;
+    return true;
+  }
+  const days = parseInt(p.preset, 10);
+  if(!isFinite(days)) return true;
+  const from = isoLocal(new Date(Date.now() - days * 86400000));
+  return t.date >= from;
+}
+/** teks deskripsi periode aktif (untuk hint) */
+function periodText(){
+  const p = ui.period;
+  if(!p || p.preset === "all") return "";
+  if(p.preset === "custom") return (p.from || "…") + " → " + (p.to || "…");
+  const n = parseInt(p.preset, 10);
+  return isFinite(n) ? n + " hari terakhir" : "";
+}
+
+/**
+ * Total P&L periode aktif vs periode sebelumnya yang sama panjangnya.
+ * Dasar baris delta di kartu Total P&L ("… vs periode sebelumnya").
+ * null bila periode "Semua" atau rentang custom belum lengkap.
+ * Mengabaikan filter tabel — jendelanya murni soal periode.
+ */
+function periodDelta(){
+  const p = ui.period;
+  if(!p || p.preset === "all") return null;
+  let from, to;
+  if(p.preset === "custom"){
+    if(!p.from || !p.to || p.from > p.to) return null;
+    from = p.from; to = p.to;
+  }else{
+    const days = parseInt(p.preset, 10);
+    if(!isFinite(days)) return null;
+    from = isoLocal(new Date(Date.now() - days * 86400000));
+    to = isoLocal(new Date());
+  }
+  const len = Math.round((Date.parse(to + "T00:00:00") - Date.parse(from + "T00:00:00")) / 86400000) + 1;
+  const prevTo = isoLocal(new Date(Date.parse(from + "T00:00:00") - 86400000));
+  const prevFrom = isoLocal(new Date(Date.parse(from + "T00:00:00") - len * 86400000));
+  const sum = (a, b) => trades.filter(t => t.date >= a && t.date <= b)
+                                .reduce((acc, t) => acc + pnlDisplay(t), 0);
+  return { cur: sum(from, to), prev: sum(prevFrom, prevTo), from, to };
+}
+
 /* ---------- filtering & sorting ---------- */
 function filtered(){
   const f = ui.filters;
@@ -135,6 +190,7 @@ function filtered(){
     if(f.emotion && String(t.emotion || "") !== f.emotion) return false;
     if(f.from && t.date < f.from) return false;
     if(f.to && t.date > f.to) return false;
+    if(!inPeriod(t)) return false; // periode ringkasan (7d/30d/…/custom) berlaku ke semua section
     return true;
   });
 }
@@ -184,6 +240,17 @@ function computeStats(list){
     maxDD = Math.max(maxDD, peak - cum);
   });
 
+  // hari trading: menang/kalah dihitung per tanggal, bukan per trade
+  const perDay = new Map();
+  chrono.forEach(t => perDay.set(t.date, (perDay.get(t.date) || 0) + pnlDisplay(t)));
+  const dayVals = Array.from(perDay.values());
+  const dayProfits = dayVals.filter(v => v > 0);
+  const dayTotalProfit = dayProfits.reduce((a, b) => a + b, 0);
+
+  // R-multiple rata-rata (hanya trade yang punya stop loss)
+  let rSum = 0, rN = 0;
+  list.forEach(t => { const r = rMultiple(t); if(r !== null){ rSum += r; rN++; } });
+
   return {
     n, total, wins, losses, flat,
     winRate: (wins + losses) ? wins / (wins + losses) : null,
@@ -191,7 +258,17 @@ function computeStats(list){
     expectancy: n ? total / n : null,
     avgWin: wins ? grossWin / wins : null,
     avgLoss: losses ? grossLoss / losses : null,
-    winStreak, lossStreak, maxDD,
+    avgWinLossRatio: (wins && losses) ? (grossWin / wins) / Math.abs(grossLoss / losses) : null,
+    tradingDays: dayVals.length,
+    dayWinRate: dayVals.length ? dayProfits.length / dayVals.length : null,
+    // konsentrasi profit: porsi profit dari hari terbaik terhadap seluruh hari profit
+    concentration: dayTotalProfit > 0 ? Math.max(...dayProfits) / dayTotalProfit : null,
+    // drawdown terhadap puncak kumulatif; puncak <= 0 berarti tak bisa diukur dalam %
+    maxDDPct: maxDD > 0 ? (peak > 0 ? maxDD / peak : null) : 0,
+    recovery: maxDD > 0 ? total / maxDD : null,
+    avgR: rN ? rSum / rN : null,
+    nR: rN,
+    winStreak, lossStreak, maxDD, peak,
     best: best === null ? null : pnl[best],
     worst: worst === null ? null : pnl[worst],
     tradesBest: best === null ? null : list[best],
@@ -288,7 +365,7 @@ export {
   load, saveTrades, saveSettings, onDataSave, uid, fmtCache, fmtCacheClear,
   money, signedMoney, compactMoney, price, qtyFmt, dateLabel, shortDate, esc,
   pnlRaw, rMultiple, riskAmount, pnlDisplay, resultOf,
-  filtered, sorted, computeStats, toneClass, isFiltering,
+  filtered, sorted, computeStats, toneClass, isFiltering, inPeriod, periodText, periodDelta, isoLocal,
   setTrades, upsertTrade, removeTrade, restoreFromBackup
 };
 

@@ -3,7 +3,7 @@
    Mengelompokkan P&L per hari dari trade yang sedang ditampilkan,
    dengan navigasi bulan ‹ ›.
    ============================================================ */
-import { $, settings, signedMoney, compactMoney, pnlDisplay } from "./store.js";
+import { $, settings, signedMoney, compactMoney, toneClass, pnlDisplay } from "./store.js";
 
 const WD = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
 const MONTHS = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
@@ -38,6 +38,7 @@ function draw(){
 
   // P&L per hari dalam bulan aktif
   const days = {};
+  const counts = {};
   let max = 0, totalMonth = 0;
   const prefix = y + "-" + pad(m + 1) + "-";
   list.forEach(t => {
@@ -45,15 +46,28 @@ function draw(){
     const d = Number(t.date.slice(8, 10));
     const p = pnlDisplay(t);
     days[d] = (days[d] || 0) + p;
+    counts[d] = (counts[d] || 0) + 1;
     totalMonth += p;
   });
   Object.values(days).forEach(v => { max = Math.max(max, Math.abs(v)); });
   const activeDays = Object.keys(days).length;
+  const greenDays = Object.values(days).filter(v => v > 0).length;
 
   $("#kalLabel").textContent = MONTHS[m] + " " + y;
   $("#kalSummary").textContent = activeDays
-    ? signedMoney(totalMonth, settings.displayCur) + " dari " + activeDays + " hari trading"
+    ? activeDays + " hari trading · " + greenDays + " hijau"
     : "Belum ada trade di bulan ini";
+
+  const footDays = $("#calDays"), footTotal = $("#calTotal");
+  if(footDays){
+    footDays.textContent = activeDays
+      ? "Rata-rata " + signedMoney(totalMonth / activeDays, settings.displayCur) + " per hari"
+      : "—";
+  }
+  if(footTotal){
+    footTotal.textContent = activeDays ? "Bulan: " + signedMoney(totalMonth, settings.displayCur) : "—";
+    footTotal.className = "num " + (activeDays ? toneClass(totalMonth) : "flat");
+  }
 
   const offset = (new Date(y, m, 1).getDay() + 6) % 7; // Senin = kolom 0
   const dim = new Date(y, m + 1, 0).getDate();
@@ -72,6 +86,7 @@ function draw(){
       html += `<div class="cal-cell cal-day ${cls}" style="background:rgba(${rgb},${alpha.toFixed(2)})">
         <span class="cal-d">${d}</span>
         <span class="cal-v num">${val}</span>
+        <span class="cal-n">${counts[d]} trade</span>
       </div>`;
     }
   }

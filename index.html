@@ -38,9 +38,87 @@
     <div class="section-head">
       <h2 id="ringkasan-h">Ringkasan</h2>
       <p class="hint" id="scopeHint">Semua trade</p>
+      <div class="spacer"></div>
+      <div class="segmented period-seg" role="group" aria-label="Periode ringkasan">
+        <button type="button" data-period="all" aria-pressed="true">Semua</button>
+        <button type="button" data-period="7d" aria-pressed="false">7d</button>
+        <button type="button" data-period="30d" aria-pressed="false">30d</button>
+        <button type="button" data-period="60d" aria-pressed="false">60d</button>
+        <button type="button" data-period="90d" aria-pressed="false">90d</button>
+        <button type="button" data-period="180d" aria-pressed="false">180d</button>
+        <button type="button" data-period="custom" aria-pressed="false">Sesuaikan</button>
+      </div>
+      <button type="button" class="btn btn-ghost" id="layoutBtn" title="Sembunyikan atau susun ulang kartu Ringkasan">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M4 7h6M14 7h6M4 12h10M18 12h2M4 17h3M11 17h9"/><circle cx="12" cy="7" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="9" cy="17" r="2"/></svg>
+        <span>Susun kartu</span> <span class="lay-count" id="layoutCount"></span>
+      </button>
+    </div>
+    <div class="period-bar" id="periodCustom" hidden>
+      <label class="period-lbl" for="periodFrom">Dari</label>
+      <input type="date" id="periodFrom" class="input">
+      <span class="period-sep">–</span>
+      <label class="period-lbl" for="periodTo">Sampai</label>
+      <input type="date" id="periodTo" class="input">
     </div>
     <div class="ledger" id="ledger"></div>
+    <p class="period-note" id="periodNote"></p>
     <p class="filter-note" id="filterNote" hidden></p>
+
+    <div class="score-panel" id="scorePanel" hidden>
+      <div class="score-main">
+        <span class="score-title">Skor kinerja</span>
+        <div class="score-row">
+          <span class="score-value num flat" id="scoreValue">—</span>
+          <span class="score-band flat" id="scoreBand">—</span>
+        </div>
+        <p class="score-meta" id="scoreMeta"></p>
+        <div class="score-comps" id="scoreComps"></div>
+      </div>
+      <div class="score-radar">
+        <canvas id="scoreRadar" role="img" aria-label="Radar enam komponen skor kinerja"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="equity-h">
+    <div class="section-head">
+      <h2 id="equity-h">Equity curve</h2>
+      <p class="hint">Kumulatif P&amp;L dari trade yang sedang ditampilkan</p>
+      <div class="spacer"></div>
+      <div class="segmented" role="group" aria-label="Tipe grafik">
+        <button type="button" id="chartEquity" aria-pressed="true">Kurva equity</button>
+        <button type="button" id="chartLossPie" aria-pressed="false">Faktor loss</button>
+      </div>
+    </div>
+    <div class="chart-wrap" id="chartWrap">
+      <canvas id="equity" role="img" aria-label="Grafik equity curve kumulatif"></canvas>
+      <canvas id="lossPie" role="img" aria-label="Diagram pie faktor penyebab loss" hidden></canvas>
+      <div class="chart-tip" id="chartTip" hidden></div>
+    </div>
+    <div class="chart-empty" id="chartEmpty" hidden>
+      <p>Belum ada trade untuk digambar. Catat trade pertama dan kurvanya muncul di sini.</p>
+    </div>
+    <div class="pie-legend" id="pieLegend" hidden></div>
+  </section>
+
+  <section aria-labelledby="kal-h">
+    <div class="section-head">
+      <h2 id="kal-h">Kalender P&amp;L</h2>
+      <p class="hint" id="kalSummary"></p>
+      <div class="spacer"></div>
+      <div class="kal-nav">
+        <button type="button" class="btn btn-ghost" id="kalPrev" aria-label="Bulan sebelumnya">‹</button>
+        <span class="kal-month" id="kalLabel"></span>
+        <button type="button" class="btn btn-ghost" id="kalNext" aria-label="Bulan berikutnya">›</button>
+      </div>
+    </div>
+    <div class="cal-card">
+      <div class="cal" id="calGrid"></div>
+      <div class="cal-foot">
+        <span id="calDays">—</span>
+        <span id="calTotal" class="num">—</span>
+      </div>
+    </div>
   </section>
 
   <section aria-labelledby="bd-h" id="breakdownSection" hidden>
@@ -81,41 +159,6 @@
         <div class="hist" id="bdHist"></div>
       </div>
     </div>
-  </section>
-
-  <section aria-labelledby="equity-h">
-    <div class="section-head">
-      <h2 id="equity-h">Equity curve</h2>
-      <p class="hint">Kumulatif P&amp;L dari trade yang sedang ditampilkan</p>
-      <div class="spacer"></div>
-      <div class="segmented" role="group" aria-label="Tipe grafik">
-        <button type="button" id="chartEquity" aria-pressed="true">Kurva equity</button>
-        <button type="button" id="chartLossPie" aria-pressed="false">Faktor loss</button>
-      </div>
-    </div>
-    <div class="chart-wrap" id="chartWrap">
-      <canvas id="equity" role="img" aria-label="Grafik equity curve kumulatif"></canvas>
-      <canvas id="lossPie" role="img" aria-label="Diagram pie faktor penyebab loss" hidden></canvas>
-      <div class="chart-tip" id="chartTip" hidden></div>
-    </div>
-    <div class="chart-empty" id="chartEmpty" hidden>
-      <p>Belum ada trade untuk digambar. Catat trade pertama dan kurvanya muncul di sini.</p>
-    </div>
-    <div class="pie-legend" id="pieLegend" hidden></div>
-  </section>
-
-  <section aria-labelledby="kal-h">
-    <div class="section-head">
-      <h2 id="kal-h">Kalender P&amp;L</h2>
-      <p class="hint" id="kalSummary"></p>
-      <div class="spacer"></div>
-      <div class="kal-nav">
-        <button type="button" class="btn btn-ghost" id="kalPrev" aria-label="Bulan sebelumnya">‹</button>
-        <span class="kal-month" id="kalLabel"></span>
-        <button type="button" class="btn btn-ghost" id="kalNext" aria-label="Bulan berikutnya">›</button>
-      </div>
-    </div>
-    <div class="cal" id="calGrid"></div>
   </section>
 
   <section aria-labelledby="kalk-h">
@@ -240,6 +283,7 @@
             </th>
             <th scope="col">Simbol</th>
             <th scope="col">Arah</th>
+            <th scope="col">Hasil</th>
             <th scope="col" class="r">Entry</th>
             <th scope="col" class="r">Exit</th>
             <th scope="col" class="r">Qty</th>
@@ -491,6 +535,32 @@
     </div>
   </form>
 </dialog>
+
+<!-- ============ dialog: sesuaikan layout kartu ============ -->
+<dialog id="layoutDialog" aria-labelledby="layoutDlgTitle">
+  <div class="dlg-head">
+    <h2 id="layoutDlgTitle">Sesuaikan Ringkasan</h2>
+    <button type="button" class="icon-btn" id="closeLayout" aria-label="Tutup">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="dlg-body">
+    <p class="hint" style="color:var(--muted);font-size:.85rem;margin:0 0 14px">
+      Pilih kartu yang tampil dan susun urutannya. Pilihan tersimpan di browser ini.
+    </p>
+    <div class="lay-list" id="layoutList"></div>
+  </div>
+  <div class="dlg-foot">
+    <button type="button" class="btn" id="layoutReset" style="margin-right:auto">Kembalikan default</button>
+    <button type="button" class="btn btn-primary" id="layoutDone">Selesai</button>
+  </div>
+</dialog>
+
+<!-- ============ dialog: sesuaikan layout kartu ============ -->
+
+<!-- ============ dialog: sesuaikan layout kartu ============ -->
+
+<!-- ============ dialog: sesuaikan layout kartu ============ -->
 
 <!-- ============ dialog: konfirmasi (dalam-aplikasi, tidak memblokir) ============ -->
 <dialog id="confirmDialog" aria-labelledby="confirmTitle">
